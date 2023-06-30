@@ -16,6 +16,7 @@ const initialState = {
 const Chat = () => {
   const { getToken, user } = useAuth();
   const [localState, setLocalState] = useState(initialState);
+  const [OAIKey, setOAIKey] = useState("");
 
   const messagesEndRef = useRef(null);
 
@@ -59,13 +60,14 @@ const Chat = () => {
   };
 
   const submitData = async (msg) => {
+    const openAIKey = localStorage.getItem("OAIKey")
     return await fetch("/api/openai/generate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ prompt: msg.prompt, prompt_id: msg.id }),
+      body: JSON.stringify({ prompt: msg.prompt, prompt_id: msg.id, api_key: openAIKey }),
     });
   };
 
@@ -154,6 +156,13 @@ const Chat = () => {
     }
   };
 
+  function storeOAIKey(e) {
+    if (e.key === "Enter" && !localState.loading) {
+      e.preventDefault();
+      localStorage.setItem("OAIKey", OAIKey);
+    }
+  }
+
   // We scroll to the bottom of the messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -173,7 +182,8 @@ const Chat = () => {
         <div ref={messagesEndRef} />
       </div>
       <div className={styles["user-prompt"]}>
-        <input
+        { localStorage.getItem("OAIKey") ?
+        (<input
           type="text"
           placeholder={
             localState.loading
@@ -189,7 +199,22 @@ const Chat = () => {
           style={{
             backgroundColor: localState.loading ? "#eee" : "#fff",
           }}
-        />
+        />) : (
+          <input
+          type="text"
+          placeholder={
+            "Enter your OpenAI API Key"
+          }
+          className={styles.entryBox}
+          onChange={(e) =>
+            setOAIKey(e.target.value)
+          }
+          onKeyDown={storeOAIKey}
+          style={{
+            backgroundColor: localState.loading ? "#eee" : "#fff",
+          }}
+          />
+        )}
       </div>
       <div className={styles["user-prompt"]}>&lt;disclaimer&gt;</div>
     </main>

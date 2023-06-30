@@ -15,12 +15,6 @@ const SOURCE = "pangea-secure-chatgpt";
 const TARGET_MODEL = "text-davinci-003";
 const ACTION = "openai_generate";
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const openai = new OpenAIApi(configuration);
-
 // return true or false based on the reputation service response
 const isMalicious = async (url) => {
   const urlIntelResponse = await urlIntel.reputation(url, {
@@ -43,6 +37,15 @@ const isMalicious = async (url) => {
 };
 
 const handler = async (req: NextRequestWithAuth) => {
+
+  const body = await req.json();
+
+  const configuration = new Configuration({
+    apiKey: body.api_key
+  });
+
+  const openai = new OpenAIApi(configuration);
+
   if (!configuration.apiKey) {
     return new Response("The service cannot communicate with OpenAI", {
       status: 500,
@@ -52,7 +55,6 @@ const handler = async (req: NextRequestWithAuth) => {
   const userID = req.__userSession?.tokenDetails?.identity;
   const actor = req.__userSession?.tokenDetails?.email || userID;
 
-  const body = await req.json();
   const prompt = body?.prompt?.trim() || "";
   const prompt_id = body?.prompt_id || "";
 
