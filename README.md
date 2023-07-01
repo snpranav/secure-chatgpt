@@ -4,6 +4,7 @@ The goal of this boilerplate is to show how developers can use Pangea's various 
 
 We are using the following Pangea services:
 
+
 - **Auth Service**: To add authentication to a NextJS App and prevent unauthenticated users from using ChatGPT
 - **Redact Service**: To redact sensitive information from the user's prompt before the entry reaches to OpenAI API
 - **Audit Service**: To audit the user prompts
