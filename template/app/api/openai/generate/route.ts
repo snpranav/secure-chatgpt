@@ -97,8 +97,8 @@ const handler = async (req: NextRequestWithAuth) => {
     let completionResults;
 
     if (results.length > 1) {
-      auditResults = results[0]?.value;
-      completionResults = results[1]?.value;
+      auditResults = (results[0] as any).value;
+      completionResults = (results[1] as any).value;
     } else {
       completionResults = results[0];
     }
