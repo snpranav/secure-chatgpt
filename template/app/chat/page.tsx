@@ -160,6 +160,12 @@ const Chat = () => {
     if (e.key === "Enter" && !localState.loading) {
       e.preventDefault();
       localStorage.setItem("OAIKey", OAIKey);
+
+      setLocalState((prev) => ({
+        ...prev,
+        loading: false,
+        promptLoading: false,
+      }));
     }
   }
 
